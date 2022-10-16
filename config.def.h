@@ -1,7 +1,8 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const unsigned int borderpx       = 1;   /* border pixel of windows */
+static const unsigned int borderpx       = 0;   /* border pixel of windows */
+static const int corner_radius           = 10;
 static const unsigned int snap           = 32;  /* snap pixel */
 static const int swallowfloating         = 0;   /* 1 means swallow floating windows by default */
 static const int scalepreview            = 4;        /* Tag preview scaling */
@@ -14,6 +15,9 @@ static const int showbar                 = 1;   /* 0 means no bar */
 static const int topbar                  = 1;   /* 0 means bottom bar */
 static const int vertpad                 = 10;  /* vertical padding of bar */
 static const int sidepad                 = 10;  /* horizontal padding of bar */
+#define ICONSIZE 20    /* icon size */
+#define ICONSPACING 5  /* space between icon and title */
+static const int focusonwheel            = 0;
 /* Status is to be shown on: -1 (all monitors), 0 (a specific monitor by index), 'A' (active monitor) */
 static const int statusmon               = 'A';
 static const unsigned int systrayspacing = 2;   /* systray spacing */
@@ -22,6 +26,7 @@ static const unsigned int ulinepad = 5;         /* horizontal padding between th
 static const unsigned int ulinestroke  = 2;     /* thickness / height of the underline */
 static const unsigned int ulinevoffset = 0;     /* how far above the bottom of the bar the line should appear */
 static const int ulineall = 0;                  /* 1 to show underline on all tags, 0 for just the active ones */
+
 
 
 /* Indicators: see patch/bar_indicators.h for options */
@@ -76,20 +81,6 @@ static char urgfloatcolor[]              = "#db8fd9";
 
 
 
-static const unsigned int baralpha = 0xd0;
-static const unsigned int borderalpha = OPAQUE;
-static const unsigned int alphas[][3] = {
-	/*                       fg      bg        border     */
-	[SchemeNorm]         = { OPAQUE, baralpha, borderalpha },
-	[SchemeSel]          = { OPAQUE, baralpha, borderalpha },
-	[SchemeTitleNorm]    = { OPAQUE, baralpha, borderalpha },
-	[SchemeTitleSel]     = { OPAQUE, baralpha, borderalpha },
-	[SchemeTagsNorm]     = { OPAQUE, baralpha, borderalpha },
-	[SchemeTagsSel]      = { OPAQUE, baralpha, borderalpha },
-	[SchemeHidNorm]      = { OPAQUE, baralpha, borderalpha },
-	[SchemeHidSel]       = { OPAQUE, baralpha, borderalpha },
-	[SchemeUrg]          = { OPAQUE, baralpha, borderalpha },
-};
 
 static char *colors[][ColCount] = {
 	/*                       fg                bg                border                float */
@@ -213,7 +204,6 @@ static const Layout layouts[] = {
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
 	{ "|M|",      centeredmaster },
-	{ "[\\]",     dwindle },
 	{ "---",      horizgrid },
 };
 
@@ -239,6 +229,7 @@ static const char *dmenucmd[] = {
 	"-nf", normfgcolor,
 	"-sb", selbgcolor,
 	"-sf", selfgcolor,
+	topbar ? NULL : "-b",
 	NULL
 };
 static const char *termcmd[]  = { "st", NULL };
@@ -258,6 +249,9 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_d,          incnmaster,             {.i = -1 } },
 	{ MODKEY,                       XK_h,          setmfact,               {.f = -0.05} },
 	{ MODKEY,                       XK_l,          setmfact,               {.f = +0.05} },
+	{ MODKEY|ShiftMask,             XK_h,          setcfact,               {.f = +0.25} },
+	{ MODKEY|ShiftMask,             XK_l,          setcfact,               {.f = -0.25} },
+	{ MODKEY|ShiftMask,             XK_o,          setcfact,               {0} },
 	{ MODKEY|ControlMask|ShiftMask, XK_e,          aspectresize,           {.i = +24} },
 	{ MODKEY|ControlMask|ShiftMask, XK_r,          aspectresize,           {.i = -24} },
 	{ MODKEY,                       XK_Return,     zoom,                   {0} },
@@ -314,9 +308,21 @@ static const Button buttons[] = {
 	{ ClkStatusText,        0,                   Button1,        sigstatusbar,   {.i = 1 } },
 	{ ClkStatusText,        0,                   Button2,        sigstatusbar,   {.i = 2 } },
 	{ ClkStatusText,        0,                   Button3,        sigstatusbar,   {.i = 3 } },
-	{ ClkClientWin,         MODKEY,              Button1,        movemouse,      {0} },
+	/* placemouse options, choose which feels more natural:
+	 *    0 - tiled position is relative to mouse cursor
+	 *    1 - tiled postiion is relative to window center
+	 *    2 - mouse pointer warps to window center
+	 *
+	 * The moveorplace uses movemouse or placemouse depending on the floating state
+	 * of the selected client. Set up individual keybindings for the two if you want
+	 * to control these separately (i.e. to retain the feature to move a tiled window
+	 * into a floating position).
+	 */
+	{ ClkClientWin,         MODKEY,              Button1,        moveorplace,    {.i = 1} },
 	{ ClkClientWin,         MODKEY,              Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,              Button3,        resizemouse,    {0} },
+	{ ClkClientWin,         MODKEY|ShiftMask,    Button3,        dragcfact,      {0} },
+	{ ClkClientWin,         MODKEY|ShiftMask,    Button1,        dragmfact,      {0} },
 	{ ClkTagBar,            0,                   Button1,        view,           {0} },
 	{ ClkTagBar,            0,                   Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,              Button1,        tag,            {0} },

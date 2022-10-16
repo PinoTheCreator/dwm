@@ -154,7 +154,7 @@
 #define BAR_STATUS2D_PATCH 1
 
 /* Supplementary patch should you want to disable alpha for the status2d section */
-#define BAR_STATUS2D_NO_ALPHA_PATCH 1
+#define BAR_STATUS2D_NO_ALPHA_PATCH 0
 
 /* Addition to the status2d patch that allows the use of terminal colors (color0 through color15)
  * from xrdb in the status, allowing programs like pywal to change statusbar colors.
@@ -198,7 +198,7 @@
  * https://github.com/AdamYuan/dwm-winicon
  * https://dwm.suckless.org/patches/winicon
  */
-#define BAR_WINICON_PATCH 0
+#define BAR_WINICON_PATCH 1
 
 /* Show window title in bar */
 #define BAR_WINTITLE_PATCH 1
@@ -249,7 +249,7 @@
  * when including this patch.
  * https://dwm.suckless.org/patches/alpha/
  */
-#define BAR_ALPHA_PATCH 1
+#define BAR_ALPHA_PATCH 0
 
 /* This patch introduces alternative tags which can be switched on the fly for the
  * sole purpose of providing visual aid.
@@ -299,19 +299,11 @@
  */
 #define BAR_CLIENTINDICATOR_PATCH N/A
 
-/* This patch enables color emoji in dwm by removing a workaround for a BadLength error
- * in the Xft library when color glyphs are used.
- * To enable this you will need an updated Xft library that can handle color glyphs otherwise
- * dwm will crash on encountering such characters. Note that you will also need a font that
- * provides color emojis for this to work.
- */
-#define BAR_COLOR_EMOJI_PATCH 1
-
 /* Updates the position of dmenu to match that of the bar. I.e. if topbar is 0 then dmenu
  * will appear at the bottom and if 1 then dmenu will appear at the top.
  * https://dwm.suckless.org/patches/dmenumatchtop
  */
-#define BAR_DMENUMATCHTOP_PATCH 0
+#define BAR_DMENUMATCHTOP_PATCH 1
 
 /* Originally this was the extrabar patch, but as the handling of extra bars is now built-in
  * only the splitting of the status by a designated separator remains. As such this has been
@@ -359,6 +351,12 @@
  */
 #define BAR_IGNORE_XFT_ERRORS_WHEN_DRAWING_TEXT_PATCH 0
 
+/* This patch adds back in the workaround for a BadLength error in the Xft library when color
+ * glyphs are used. This is for systems that do not have an updated version of the Xft library
+ * (or generally prefer monochrome fonts).
+ */
+#define BAR_NO_COLOR_EMOJI_PATCH 0
+
 /* This patch adds vertical and horizontal space between the statusbar and the edge of the screen.
  * https://dwm.suckless.org/patches/barpadding/
  */
@@ -369,7 +367,7 @@
  * toggled in unison when vanitygaps are toggled. Increasing or decreasing gaps during runtime
  * will not affect the bar padding.
  */
-#define BAR_PADDING_VANITYGAPS_PATCH 1
+#define BAR_PADDING_VANITYGAPS_PATCH 0
 
 /* This patch adds simple markup for status messages using pango markup.
  * This depends on the pango library v1.44 or greater.
@@ -440,6 +438,11 @@
  * Other patches
  */
 
+/* Adds a window task switcher toggled using alt-tab.
+ * https://dwm.suckless.org/patches/alt-tab/
+ */
+#define ALT_TAB_PATCH 0
+
 /* All floating windows are centered, like the center patch, but without a rule.
  * The center patch takes precedence over this patch.
  * This patch interferes with the center transient windows patches.
@@ -488,7 +491,7 @@
  * get resized/moved. With this patch, they will.
  * https://dwm.suckless.org/patches/autoresize/
  */
-#define AUTORESIZE_PATCH 0
+#define AUTORESIZE_PATCH 1
 
 /* This patch adds proper support for Right-To-Left languages. (such as Farsi, Arabic or Hebrew).
  *
@@ -529,7 +532,7 @@
  * respective stack in tiled layout.
  * https://dwm.suckless.org/patches/cfacts/
  */
-#define CFACTS_PATCH 0
+#define CFACTS_PATCH 1
 
 /* This patch allows color attributes to be set through the command line.
  * https://dwm.suckless.org/patches/cmdcustomize/
@@ -572,14 +575,14 @@
 /* Similarly to the dragmfact patch this allows you to click and drag clients to change the
  * cfact to adjust the client's size in the stack. This patch depends on the cfacts patch.
  */
-#define DRAGCFACT_PATCH 0
+#define DRAGCFACT_PATCH 1
 
 /* This patch lets you resize the split in the tile layout (i.e. modify mfact) by holding
  * the modkey and dragging the mouse.
  * This patch can be a bit wonky with other layouts, but generally works.
  * https://dwm.suckless.org/patches/dragmfact/
  */
-#define DRAGMFACT_PATCH 0
+#define DRAGMFACT_PATCH 1
 
 /* Simple dwmc client using a fork of fsignal to communicate with dwm.
  * To use this either copy the patch/dwmc shell script to somewhere in your path or
@@ -651,7 +654,7 @@
 /* Switch focus only by mouse click and not sloppy (focus follows mouse pointer).
  * https://dwm.suckless.org/patches/focusonclick/
  */
-#define FOCUSONCLICK_PATCH 0
+#define FOCUSONCLICK_PATCH 1
 
 /* Selects the next window having the urgent flag regardless of the tag it is on.
  * The urgent flag can be artificially set with the following xdotool command on any window:
@@ -851,7 +854,7 @@
 #define ON_EMPTY_KEYS_PATCH 0
 
 /* Minor patch that prevents more than one rule being matched for a given client. */
-#define ONLY_ONE_RULE_MATCH_PATCH 0
+#define ONLY_ONE_RULE_MATCH_PATCH 1
 
 /* This patch makes it so dwm will only exit via quit() if no windows are open.
  * This is to prevent you accidentally losing all your work.
@@ -878,7 +881,7 @@
 /* This patch lets you change the position of a client in the stack using the mouse.
  * https://github.com/bakkeby/patches/wiki/placemouse
  */
-#define PLACEMOUSE_PATCH 0
+#define PLACEMOUSE_PATCH 1
 
 /* This patch provides a way to move clients up and down inside the client list.
  * https://dwm.suckless.org/patches/push/
@@ -952,7 +955,7 @@
  * when including this patch. You will also want to set "borderpx = 0;" in your config.h.
  * https://github.com/mitchweaver/suckless/blob/master/dwm/patches/mitch-06-rounded_corners-f04cac6d6e39cd9e3fc4fae526e3d1e8df5e34b2.patch
  */
-#define ROUNDED_CORNERS_PATCH 0
+#define ROUNDED_CORNERS_PATCH 1
 
 /* This patch saves size and position of every floating window before it is forced
  * into tiled mode. If the window is made floating again then the old dimensions
@@ -1171,7 +1174,7 @@
  * https://github.com/bakkeby/patches/blob/master/dwm/dwm-switchtag-6.2.diff
  * Also see https://dwm.suckless.org/patches/switchtotag
  */
-#define SWITCHTAG_PATCH 0
+#define SWITCHTAG_PATCH 4
 
 /* This patch transforms the monocle layout into a "tabbed" layout if more than one window is
  * present on the monocle view. This patch has been added for demonstration purposes only and has
@@ -1311,7 +1314,7 @@
  * when the mouse cursor is (a) on a different screen or (b) on top of a different window.
  * https://dwm.suckless.org/patches/warp/
  */
-#define WARP_PATCH 1
+#define WARP_PATCH 0
 
 /* Sometimes a single application opens different windows depending on the task
  * at hand and this is often reflected in the WM_WINDOW_ROLE(STRING) x property.
@@ -1320,7 +1323,7 @@
  * or Google-chrome "browser" vs "pop-up".
  * https://github.com/bakkeby/patches/blob/master/dwm/dwm-windowrolerule-6.2.diff
  */
-#define WINDOWROLERULE_PATCH 0
+#define WINDOWROLERULE_PATCH 1
 
 /* The winview patch allows switching the view to that of a given client from the all-window
  * view (Mod-0) using a keyboard shortcut.
@@ -1350,7 +1353,7 @@
  * rather than every window on the screen changing position.
  * https://dwm.suckless.org/patches/zoomswap/
  */
-#define ZOOMSWAP_PATCH 0
+#define ZOOMSWAP_PATCH 1
 
 /**
  * Layouts
@@ -1390,7 +1393,7 @@
 /* Fibonacci dwindle layout.
  * https://dwm.suckless.org/patches/fibonacci/
  */
-#define FIBONACCI_DWINDLE_LAYOUT 1
+#define FIBONACCI_DWINDLE_LAYOUT 0
 
 /* Fibonacci spiral layout.
  * https://dwm.suckless.org/patches/fibonacci/

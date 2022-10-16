@@ -1,109 +1,87 @@
 /* See LICENSE file for copyright and license details. */
 
-#include <X11/XF86keysym.h>
-
-#define VOLSIG "pkill -RTMIN+13 dwmblocks"
-
-//static const char* mediastop[] = {"playerctl", "stop", NULL};
-//static const char* mediaprev[] = {"playerctl", "previous", NULL};
-//static const char* mediaplay[] = {"playerctl", "play-pause", NULL};
-
-//static const char* calc[] = {"mate-calc", NULL};
-
 /* appearance */
 static const unsigned int borderpx       = 1;   /* border pixel of windows */
+static const int corner_radius           = 0;
 static const unsigned int snap           = 32;  /* snap pixel */
 static const int swallowfloating         = 0;   /* 1 means swallow floating windows by default */
 static const int scalepreview            = 4;        /* Tag preview scaling */
-static const unsigned int gappih         = 20;  /* horiz inner gap between windows */
+static const unsigned int gappih         = 10;  /* horiz inner gap between windows */
 static const unsigned int gappiv         = 10;  /* vert inner gap between windows */
 static const unsigned int gappoh         = 10;  /* horiz outer gap between windows and screen edge */
 static const unsigned int gappov         = 10;  /* vert outer gap between windows and screen edge */
 static const int smartgaps_fact          = 1;   /* gap factor when there is only one client; 0 = no gaps, 3 = 3x outer gaps */
 static const int showbar                 = 1;   /* 0 means no bar */
 static const int topbar                  = 1;   /* 0 means bottom bar */
-static const int vertpad                 = 10;  /* vertical padding of bar */
-static const int sidepad                 = 10;  /* horizontal padding of bar */
+static const int vertpad                 = 0;  /* vertical padding of bar */
+static const int sidepad                 = 0;  /* horizontal padding of bar */
+#define ICONSIZE 20    /* icon size */
+#define ICONSPACING 5  /* space between icon and title */
+static const int focusonwheel            = 0;
 /* Status is to be shown on: -1 (all monitors), 0 (a specific monitor by index), 'A' (active monitor) */
 static const int statusmon               = -1;
 static const unsigned int systrayspacing = 2;   /* systray spacing */
 static const int showsystray             = 1;   /* 0 means no systray */
-
-static const unsigned int ulinepad = 5;         /* horizontal padding between the underline and tag */
+static const unsigned int ulinepad = 2;         /* horizontal padding between the underline and tag */
 static const unsigned int ulinestroke  = 2;     /* thickness / height of the underline */
 static const unsigned int ulinevoffset = 0;     /* how far above the bottom of the bar the line should appear */
 static const int ulineall = 0;                  /* 1 to show underline on all tags, 0 for just the active ones */
+
 
 /* Indicators: see patch/bar_indicators.h for options */
 static int tagindicatortype              = INDICATOR_TOP_LEFT_SQUARE;
 static int tiledindicatortype            = INDICATOR_NONE;
 static int floatindicatortype            = INDICATOR_TOP_LEFT_SQUARE;
 static const int quit_empty_window_count = 0;   /* only allow dwm to quit if no (<= count) windows are open */
-static const char *fonts[]               = { "JetBrains Mono:size=11", "Noto Color Emoji:size=10" };
+static const char *fonts[]               = { "monospace:size=10", "Noto Color Emoji:size=10"};
+
+/* COLOURS */
+#include "themes/onedark.h"
 
 static char c000000[]                    = "#000000"; // placeholder value
 
-// COLOURS
-#define WHITE "#fbf1c7"
-#define BLACK "#282828"
-#define GREEN "#b8bb26"
-
-static char normfgcolor[]                = WHITE;
+static char normfgcolor[]                = GRAY3;
 static char normbgcolor[]                = BLACK;
-static char normbordercolor[]            = "#444444";
+static char normbordercolor[]            = GRAY2;
 static char normfloatcolor[]             = "#db8fd9";
 
-static char selfgcolor[]                 = "#eeeeee";
-static char selbgcolor[]                 = "#b8bb26";
-static char selbordercolor[]             = "#b8bb26";
-static char selfloatcolor[]              = "#b8bb26";
+static char selfgcolor[]                 = GRAY4;
+static char selbgcolor[]                 = BLUE;
+static char selbordercolor[]             = BLUE;
+static char selfloatcolor[]              = BLUE;
 
-static char titlenormfgcolor[]           = WHITE;
+static char titlenormfgcolor[]           = GRAY4;
 static char titlenormbgcolor[]           = BLACK;
 static char titlenormbordercolor[]       = "#444444";
 static char titlenormfloatcolor[]        = "#db8fd9";
 
-static char titleselfgcolor[]            = BLACK;
-static char titleselbgcolor[]            = GREEN;
-static char titleselbordercolor[]        = GREEN;
-static char titleselfloatcolor[]         = GREEN;
+static char titleselfgcolor[]            = WHITE;
+static char titleselbgcolor[]            = BLACK;
+static char titleselbordercolor[]        = BLACK;
+static char titleselfloatcolor[]         = "#005577";
 
-static char tagsnormfgcolor[]            = WHITE;
+static char tagsnormfgcolor[]            = GRAY4;
 static char tagsnormbgcolor[]            = BLACK;
-static char tagsnormbordercolor[]        = "#444444";
+static char tagsnormbordercolor[]        = BLACK;
 static char tagsnormfloatcolor[]         = "#db8fd9";
 
-static char tagsselfgcolor[]             = BLACK;
-static char tagsselbgcolor[]             = GREEN;
-static char tagsselbordercolor[]         = GREEN;
-static char tagsselfloatcolor[]          = GREEN;
+static char tagsselfgcolor[]             = BLUE;
+static char tagsselbgcolor[]             = BLACK;
+static char tagsselbordercolor[]         = BLACK;
+static char tagsselfloatcolor[]          = "#005577";
 
-static char hidnormfgcolor[]             = "#b8bb26";
+static char hidnormfgcolor[]             = "#005577";
 static char hidselfgcolor[]              = "#227799";
 static char hidnormbgcolor[]             = "#222222";
 static char hidselbgcolor[]              = "#222222";
 
-static char urgfgcolor[]                 = "#ebdbb2";
+static char urgfgcolor[]                 = "#bbbbbb";
 static char urgbgcolor[]                 = "#222222";
 static char urgbordercolor[]             = "#ff0000";
 static char urgfloatcolor[]              = "#db8fd9";
 
 
 
-static const unsigned int baralpha = 0xd0;
-static const unsigned int borderalpha = OPAQUE;
-static const unsigned int alphas[][3] = {
-	/*                       fg      bg        border     */
-	[SchemeNorm]         = { OPAQUE, baralpha, borderalpha },
-	[SchemeSel]          = { OPAQUE, baralpha, borderalpha },
-	[SchemeTitleNorm]    = { OPAQUE, baralpha, borderalpha },
-	[SchemeTitleSel]     = { OPAQUE, baralpha, borderalpha },
-	[SchemeTagsNorm]     = { OPAQUE, baralpha, borderalpha },
-	[SchemeTagsSel]      = { OPAQUE, baralpha, borderalpha },
-	[SchemeHidNorm]      = { OPAQUE, baralpha, borderalpha },
-	[SchemeHidSel]       = { OPAQUE, baralpha, borderalpha },
-	[SchemeUrg]          = { OPAQUE, baralpha, borderalpha },
-};
 
 static char *colors[][ColCount] = {
 	/*                       fg                bg                border                float */
@@ -118,7 +96,9 @@ static char *colors[][ColCount] = {
 	[SchemeUrg]          = { urgfgcolor,       urgbgcolor,       urgbordercolor,       urgfloatcolor },
 };
 
-#define MYTERM "st"
+
+
+
 
 /* Tags
  * In a traditional dwm the number of tags in use can be changed simply by changing the number
@@ -149,9 +129,9 @@ static char *colors[][ColCount] = {
  */
 static char *tagicons[][NUMTAGS] =
 {
-	[DEFAULT_TAGS]        = { "1", "2", "3", "4", "5" },
-	[ALTERNATIVE_TAGS]    = { "A", "B", "C", "D", "E" },
-	[ALT_TAGS_DECORATION] = { "<1>", "<2>", "<3>", "<4>", "<5>" },
+	[DEFAULT_TAGS]        = { "1", "2", "3", "4", "5", "6", "7", "8", "9" },
+	[ALTERNATIVE_TAGS]    = { "A", "B", "C", "D", "E", "F", "G", "H", "I" },
+	[ALT_TAGS_DECORATION] = { "<1>", "<2>", "<3>", "<4>", "<5>", "<6>", "<7>", "<8>", "<9>" },
 };
 
 
@@ -173,6 +153,9 @@ static char *tagicons[][NUMTAGS] =
  * Refer to the Rule struct definition for the list of available fields depending on
  * the patches you enable.
  */
+
+#define MYTERM "st"
+
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
@@ -184,12 +167,19 @@ static const Rule rules[] = {
 	RULE(.wintype = WTYPE "UTILITY", .isfloating = 1)
 	RULE(.wintype = WTYPE "TOOLBAR", .isfloating = 1)
 	RULE(.wintype = WTYPE "SPLASH", .isfloating = 1)
-	RULE(.class = "Gimp", .tags = 1 << 4)
-	RULE(.class = "Firefox", .tags = 1 << 7)
 
   RULE(.class = MYTERM, .isterminal = 1)
   RULE(.class = "tabbed", .isterminal = 1)
-
+  
+  RULE(.class = "mate-calc", .iscentered = 1)
+  
+  RULE(.class = "discord", .tags = 1 << 6, .switchtag = 4)
+  RULE(.class = "spotify", .tags = 1 << 7, .switchtag = 4)
+  RULE(.class = "discord", .tags = 1 << 8, .switchtag = 4)
+  
+  RULE(.class = "brave", .noswallow = 1)
+  RULE(.class = "surf", .noswallow = 1)
+  RULE(.class = "zbarimg", .noswallow = 1)
   RULE(.class = NULL, .title="Event Tester", .noswallow = 1)
 };
 
@@ -227,9 +217,8 @@ static const Layout layouts[] = {
 	{ "[]=",      tile },    /* first entry is default */
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
-  { "|M|",      centeredmaster },
-  { "[\\]",     dwindle },
-  { "---",      horizgrid },
+	{ "|M|",      centeredmaster },
+	{ "---",      horizgrid },
 };
 
 
@@ -247,12 +236,17 @@ static const Layout layouts[] = {
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-static const char *dmenucmd[] = {
-	"dmenu_run",
-	NULL
-};
-//static const char *termcmd[]  = { MYTERM, NULL };
-static const char *termcmd[]  = { "tabbed", "-c", "-r 2", MYTERM, "-w", "''", NULL };
+// static const char *dmenucmd[] = {
+// 	"dmenu_run",
+// 	"-fn", dmenufont,
+// 	"-nb", normbgcolor,
+// 	"-nf", normfgcolor,
+// 	"-sb", selbgcolor,
+// 	"-sf", selfgcolor,
+// 	topbar ? NULL : "-b",
+// 	NULL
+// };
+// static const char *termcmd[]  = { "st", NULL };
 
 /* This defines the name of the executable that handles the bar (used for signalling purposes) */
 #define STATUSBAR "dwmblocks"
@@ -260,24 +254,8 @@ static const char *termcmd[]  = { "tabbed", "-c", "-r 2", MYTERM, "-w", "''", NU
 
 static const Key keys[] = {
 	/* modifier                     key            function                argument */
-  { 0,                      XF86XK_MonBrightnessUp, spawn,               SHCMD("python ~/.local/bin/brightness.py -inc") },
-  { 0,                      XF86XK_MonBrightnessDown, spawn,             SHCMD("python ~/.local/bin/brightness.py -dec") },
- 
-  { 0,                      XF86XK_AudioMute,        spawn,              SHCMD("~/.local/bin/blocks/vol --mute") },
-  { 0,                      XF86XK_AudioRaiseVolume, spawn,              SHCMD("~/.local/bin/blocks/vol --inc") },
-  { 0,                      XF86XK_AudioLowerVolume, spawn,              SHCMD("~/.local/bin/blocks/vol --dec") },
-  { 0,                      XF86XK_AudioMicMute, spawn,                  SHCMD("pactl set-source-mute @DEFAULT_SOURCE@ toggle") },
- 
- //  { 0,                     XF86XK_NotificationCenter, spawn, {.v = mediastop} },
- //  { 0,                     XF86XK_PickupPhone, spawn, {.v = mediaprev} },
- //  { 0,                     XF86XK_HangupPhone, spawn, {.v = mediaplay} },
-  { 0,                         XF86XK_Favorites, spawn,                  SHCMD("playerctl next") },
- 
-  // { 0,                       XF86_XKCalculator, spawn, {.v = calc} },
- 
-  { MODKEY,                       XK_Print,      spawn,                  SHCMD("~/.local/bin/xscreenshot.sh")},
-	{ MODKEY,                       XK_p,          spawn,                  {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             XK_Return,     spawn,                  {.v = termcmd } },
+//	{ MODKEY,                       XK_p,          spawn,                  {.v = dmenucmd } },
+//	{ MODKEY|ShiftMask,             XK_Return,     spawn,                  {.v = termcmd } },
 	{ MODKEY,                       XK_b,          togglebar,              {0} },
 	{ MODKEY,                       XK_j,          focusstack,             {.i = +1 } },
 	{ MODKEY,                       XK_k,          focusstack,             {.i = -1 } },
@@ -285,6 +263,9 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_d,          incnmaster,             {.i = -1 } },
 	{ MODKEY,                       XK_h,          setmfact,               {.f = -0.05} },
 	{ MODKEY,                       XK_l,          setmfact,               {.f = +0.05} },
+	{ MODKEY|ShiftMask,             XK_h,          setcfact,               {.f = +0.25} },
+	{ MODKEY|ShiftMask,             XK_l,          setcfact,               {.f = -0.25} },
+	{ MODKEY|ShiftMask,             XK_o,          setcfact,               {0} },
 	{ MODKEY|ControlMask|ShiftMask, XK_e,          aspectresize,           {.i = +24} },
 	{ MODKEY|ControlMask|ShiftMask, XK_r,          aspectresize,           {.i = -24} },
 	{ MODKEY,                       XK_Return,     zoom,                   {0} },
@@ -296,8 +277,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_f,          setlayout,              {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,          setlayout,              {.v = &layouts[2]} },
   { MODKEY,                       XK_u,          setlayout,              {.v = &layouts[3]} },
-  { MODKEY,                       XK_r,          setlayout,              {.v = &layouts[4]} },
-  { MODKEY,                       XK_minus,      setlayout,              {.v = &layouts[5]} },
+  { MODKEY,                       XK_minus,      setlayout,              {.v = &layouts[4]} },
 	{ MODKEY,                       XK_space,      setlayout,              {0} },
 	{ MODKEY|ShiftMask,             XK_space,      togglefloating,         {0} },
 	{ MODKEY,                       XK_0,          view,                   {.ui = ~0 } },
@@ -311,6 +291,10 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_3,                                  2)
 	TAGKEYS(                        XK_4,                                  3)
 	TAGKEYS(                        XK_5,                                  4)
+	TAGKEYS(                        XK_6,                                  5)
+	TAGKEYS(                        XK_7,                                  6)
+	TAGKEYS(                        XK_8,                                  7)
+	TAGKEYS(                        XK_9,                                  8)
 };
 
 
@@ -324,10 +308,23 @@ static const Button buttons[] = {
 	{ ClkStatusText,        0,                   Button1,        sigstatusbar,   {.i = 1 } },
 	{ ClkStatusText,        0,                   Button2,        sigstatusbar,   {.i = 2 } },
 	{ ClkStatusText,        0,                   Button3,        sigstatusbar,   {.i = 3 } },
-	{ ClkStatusText,        ShiftMask,           Button1,        sigstatusbar,   {.i = 6 } },
-	{ ClkClientWin,         MODKEY,              Button1,        movemouse,      {0} },
+  { ClkStatusText,        ShiftMask,           Button1,        sigstatusbar,   {.i = 6 } },
+
+	/* placemouse options, choose which feels more natural:
+	 *    0 - tiled position is relative to mouse cursor
+	 *    1 - tiled postiion is relative to window center
+	 *    2 - mouse pointer warps to window center
+	 *
+	 * The moveorplace uses movemouse or placemouse depending on the floating state
+	 * of the selected client. Set up individual keybindings for the two if you want
+	 * to control these separately (i.e. to retain the feature to move a tiled window
+	 * into a floating position).
+	 */
+	{ ClkClientWin,         MODKEY,              Button1,        moveorplace,    {.i = 1} },
 	{ ClkClientWin,         MODKEY,              Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,              Button3,        resizemouse,    {0} },
+	{ ClkClientWin,         MODKEY|ShiftMask,    Button3,        dragcfact,      {0} },
+	{ ClkClientWin,         MODKEY|ShiftMask,    Button1,        dragmfact,      {0} },
 	{ ClkTagBar,            0,                   Button1,        view,           {0} },
 	{ ClkTagBar,            0,                   Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,              Button1,        tag,            {0} },

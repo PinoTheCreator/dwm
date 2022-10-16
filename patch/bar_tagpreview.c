@@ -40,12 +40,10 @@ tagpreviewswitchtag(void)
 				image = imlib_create_image(sw, sh);
 				imlib_context_set_image(image);
 				imlib_context_set_display(dpy);
-				imlib_image_set_has_alpha(1);
-				imlib_context_set_blend(0);
-				imlib_context_set_visual(visual);
+				imlib_context_set_visual(DefaultVisual(dpy, screen));
 				imlib_context_set_drawable(root);
 				imlib_copy_drawable_to_image(0, selmon->mx, selmon->my, selmon->mw ,selmon->mh, 0, 0, 1);
-				selmon->tagmap[i] = XCreatePixmap(dpy, selmon->tagwin, selmon->mw / scalepreview, selmon->mh / scalepreview, depth);
+				selmon->tagmap[i] = XCreatePixmap(dpy, selmon->tagwin, selmon->mw / scalepreview, selmon->mh / scalepreview, DefaultDepth(dpy, screen));
 				imlib_context_set_drawable(selmon->tagmap[i]);
 				imlib_render_image_part_on_drawable_at_size(0, 0, selmon->mw, selmon->mh, 0, 0, selmon->mw / scalepreview, selmon->mh / scalepreview);
 				imlib_free_image();
@@ -61,15 +59,13 @@ updatepreview(void)
 
 	XSetWindowAttributes wa = {
 		.override_redirect = True,
-		.background_pixel = 0,
-		.border_pixel = 0,
-		.colormap = cmap,
+		.background_pixmap = ParentRelative,
 		.event_mask = ButtonPressMask|ExposureMask
 	};
 	for (m = mons; m; m = m->next) {
 		m->tagwin = XCreateWindow(dpy, root, m->wx, m->bar->by + bh, m->mw / 4, m->mh / 4, 0,
-				depth, CopyFromParent, visual,
-				CWOverrideRedirect|CWBackPixel|CWBorderPixel|CWColormap|CWEventMask, &wa
+				DefaultDepth(dpy, screen), CopyFromParent, DefaultVisual(dpy, screen),
+				CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa
 				);
 		XDefineCursor(dpy, m->tagwin, cursor[CurNormal]->cursor);
 		XMapRaised(dpy, m->tagwin);
