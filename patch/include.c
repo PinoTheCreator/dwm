@@ -15,14 +15,12 @@
 #include "bar_systray.c"
 
 /* Other patches */
-#include "aspectresize.c"
 #include "attachx.c"
 #include "cfacts.c"
 #include "dragcfact.c"
 #include "pertag.c"
 #include "placemouse.c"
 #include "restartsig.c"
-#include "roundedcorners.c"
 #include "swallow.c"
 #include "vanitygaps.c"
 #include "zoomswap.c"

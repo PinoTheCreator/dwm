@@ -15,7 +15,6 @@
 #include "bar_systray.h"
 
 /* Other patches */
-#include "aspectresize.h"
 #include "attachx.h"
 #include "cfacts.h"
 #include "dragcfact.h"
@@ -23,7 +22,6 @@
 #include "pertag.h"
 #include "placemouse.h"
 #include "restartsig.h"
-#include "roundedcorners.h"
 #include "seamless_restart.h"
 #include "swallow.h"
 #include "vanitygaps.h"

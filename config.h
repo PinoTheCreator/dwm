@@ -2,7 +2,6 @@
 
 /* appearance */
 static const unsigned int borderpx       = 1;   /* border pixel of windows */
-static const int corner_radius           = 0;
 static const unsigned int snap           = 32;  /* snap pixel */
 static const int swallowfloating         = 0;   /* 1 means swallow floating windows by default */
 static const int scalepreview            = 4;        /* Tag preview scaling */
@@ -17,10 +16,9 @@ static const int vertpad                 = 0;  /* vertical padding of bar */
 static const int sidepad                 = 0;  /* horizontal padding of bar */
 #define ICONSIZE 20    /* icon size */
 #define ICONSPACING 5  /* space between icon and title */
-static const int focusonwheel            = 0;
 /* Status is to be shown on: -1 (all monitors), 0 (a specific monitor by index), 'A' (active monitor) */
-static const int statusmon               = -1;
-static const unsigned int systrayspacing = 2;   /* systray spacing */
+static const int statusmon               = 'A';
+static const unsigned int systrayspacing = 0;   /* systray spacing */
 static const int showsystray             = 1;   /* 0 means no systray */
 static const unsigned int ulinepad = 2;         /* horizontal padding between the underline and tag */
 static const unsigned int ulinestroke  = 2;     /* thickness / height of the underline */
@@ -33,7 +31,7 @@ static int tagindicatortype              = INDICATOR_TOP_LEFT_SQUARE;
 static int tiledindicatortype            = INDICATOR_NONE;
 static int floatindicatortype            = INDICATOR_TOP_LEFT_SQUARE;
 static const int quit_empty_window_count = 0;   /* only allow dwm to quit if no (<= count) windows are open */
-static const char *fonts[]               = { "monospace:size=10", "Noto Color Emoji:size=10"};
+static const char *fonts[]               = { "monospace:size=10", "Noto Color Emoji:size=10" };
 
 /* COLOURS */
 #include "themes/onedark.h"
@@ -97,7 +95,7 @@ static char *colors[][ColCount] = {
 };
 
 
-
+#define MYTERM "st"
 
 
 /* Tags
@@ -153,9 +151,6 @@ static char *tagicons[][NUMTAGS] =
  * Refer to the Rule struct definition for the list of available fields depending on
  * the patches you enable.
  */
-
-#define MYTERM "st"
-
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
@@ -170,18 +165,20 @@ static const Rule rules[] = {
 
   RULE(.class = MYTERM, .isterminal = 1)
   RULE(.class = "tabbed", .isterminal = 1)
-  
+
   RULE(.class = "mate-calc", .iscentered = 1)
-  
+
   RULE(.class = "discord", .tags = 1 << 6, .switchtag = 4)
-  RULE(.class = "spotify", .tags = 1 << 7, .switchtag = 4)
-  RULE(.class = "discord", .tags = 1 << 8, .switchtag = 4)
-  
+  RULE(.class = "Spotify", .tags = 1 << 7, .switchtag = 4)
+  RULE(.class = "Steam", .tags = 1 << 8, .switchtag = 4)
+
   RULE(.class = "brave", .noswallow = 1)
   RULE(.class = "surf", .noswallow = 1)
   RULE(.class = "zbarimg", .noswallow = 1)
   RULE(.class = NULL, .title="Event Tester", .noswallow = 1)
 };
+
+
 
 /* Bar rules allow you to configure what is shown where on the bar, as well as
  * introducing your own bar modules.
@@ -236,17 +233,17 @@ static const Layout layouts[] = {
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-// static const char *dmenucmd[] = {
-// 	"dmenu_run",
-// 	"-fn", dmenufont,
-// 	"-nb", normbgcolor,
-// 	"-nf", normfgcolor,
-// 	"-sb", selbgcolor,
-// 	"-sf", selfgcolor,
-// 	topbar ? NULL : "-b",
-// 	NULL
-// };
-// static const char *termcmd[]  = { "st", NULL };
+//static const char *dmenucmd[] = {
+//	"dmenu_run",
+//	"-fn", dmenufont,
+//	"-nb", normbgcolor,
+//	"-nf", normfgcolor,
+//	"-sb", selbgcolor,
+//	"-sf", selfgcolor,
+//	topbar ? NULL : "-b",
+//	NULL
+//};
+//static const char *termcmd[]  = { "st", NULL };
 
 /* This defines the name of the executable that handles the bar (used for signalling purposes) */
 #define STATUSBAR "dwmblocks"
@@ -266,9 +263,23 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_h,          setcfact,               {.f = +0.25} },
 	{ MODKEY|ShiftMask,             XK_l,          setcfact,               {.f = -0.25} },
 	{ MODKEY|ShiftMask,             XK_o,          setcfact,               {0} },
-	{ MODKEY|ControlMask|ShiftMask, XK_e,          aspectresize,           {.i = +24} },
-	{ MODKEY|ControlMask|ShiftMask, XK_r,          aspectresize,           {.i = -24} },
 	{ MODKEY,                       XK_Return,     zoom,                   {0} },
+//	{ MODKEY|Mod4Mask,              XK_u,          incrgaps,               {.i = +1 } },
+//	{ MODKEY|Mod4Mask|ShiftMask,    XK_u,          incrgaps,               {.i = -1 } },
+//	{ MODKEY|Mod4Mask,              XK_i,          incrigaps,              {.i = +1 } },
+//	{ MODKEY|Mod4Mask|ShiftMask,    XK_i,          incrigaps,              {.i = -1 } },
+//	{ MODKEY|Mod4Mask,              XK_o,          incrogaps,              {.i = +1 } },
+//	{ MODKEY|Mod4Mask|ShiftMask,    XK_o,          incrogaps,              {.i = -1 } },
+//	{ MODKEY|Mod4Mask,              XK_6,          incrihgaps,             {.i = +1 } },
+//	{ MODKEY|Mod4Mask|ShiftMask,    XK_6,          incrihgaps,             {.i = -1 } },
+//	{ MODKEY|Mod4Mask,              XK_7,          incrivgaps,             {.i = +1 } },
+//	{ MODKEY|Mod4Mask|ShiftMask,    XK_7,          incrivgaps,             {.i = -1 } },
+//	{ MODKEY|Mod4Mask,              XK_8,          incrohgaps,             {.i = +1 } },
+//	{ MODKEY|Mod4Mask|ShiftMask,    XK_8,          incrohgaps,             {.i = -1 } },
+//	{ MODKEY|Mod4Mask,              XK_9,          incrovgaps,             {.i = +1 } },
+//	{ MODKEY|Mod4Mask|ShiftMask,    XK_9,          incrovgaps,             {.i = -1 } },
+//	{ MODKEY|Mod4Mask,              XK_0,          togglegaps,             {0} },
+//	{ MODKEY|Mod4Mask|ShiftMask,    XK_0,          defaultgaps,            {0} },
 	{ MODKEY,                       XK_Tab,        view,                   {0} },
 	{ MODKEY|ShiftMask,             XK_c,          killclient,             {0} },
 	{ MODKEY|ShiftMask,             XK_q,          quit,                   {1} },
@@ -309,7 +320,6 @@ static const Button buttons[] = {
 	{ ClkStatusText,        0,                   Button2,        sigstatusbar,   {.i = 2 } },
 	{ ClkStatusText,        0,                   Button3,        sigstatusbar,   {.i = 3 } },
   { ClkStatusText,        ShiftMask,           Button1,        sigstatusbar,   {.i = 6 } },
-
 	/* placemouse options, choose which feels more natural:
 	 *    0 - tiled position is relative to mouse cursor
 	 *    1 - tiled postiion is relative to window center
