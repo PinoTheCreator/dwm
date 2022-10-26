@@ -216,7 +216,6 @@ struct Client {
 	unsigned int switchtag;
 	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen;
 	int needresize;
-	int iscentered;
 	int beingmoved;
 	int isterminal, noswallow;
 	pid_t pid;
@@ -280,7 +279,6 @@ typedef struct {
 	const char *wintype;
 	unsigned int tags;
 	int switchtag;
-	int iscentered;
 	int isfloating;
 	int isterminal;
 	int noswallow;
@@ -291,7 +289,7 @@ typedef struct {
 
 /* Cross patch compatibility rule macro helper macros */
 #define FLOATING , .isfloating = 1
-#define CENTERED , .iscentered = 1
+#define CENTERED
 #define PERMANENT
 #define FAKEFULLSCREEN
 #define NOSWALLOW , .noswallow = 1
@@ -480,7 +478,6 @@ applyrules(Client *c)
 		&& (!r->instance || strstr(instance, r->instance))
 		&& (!r->wintype || wintype == XInternAtom(dpy, r->wintype, False)))
 		{
-			c->iscentered = r->iscentered;
 			c->isterminal = r->isterminal;
 			c->noswallow = r->noswallow;
 			c->isfloating = r->isfloating;
@@ -1214,7 +1211,6 @@ void
 enternotify(XEvent *e)
 {
 	Client *c;
-	Client *sel;
 	Monitor *m;
 	XCrossingEvent *ev = &e->xcrossing;
 
@@ -1223,9 +1219,8 @@ enternotify(XEvent *e)
 	c = wintoclient(ev->window);
 	m = c ? c->mon : wintomon(ev->window);
 	if (m != selmon) {
-		sel = selmon->sel;
+		unfocus(selmon->sel, 1, c);
 		selmon = m;
-		unfocus(sel, 1, c);
 	} else if (!c || c == selmon->sel)
 		return;
 	focus(c);
@@ -1285,15 +1280,13 @@ void
 focusmon(const Arg *arg)
 {
 	Monitor *m;
-	Client *sel;
 
 	if (!mons->next)
 		return;
 	if ((m = dirtomon(arg->i)) == selmon)
 		return;
-	sel = selmon->sel;
+	unfocus(selmon->sel, 0, NULL);
 	selmon = m;
-	unfocus(sel, 0, NULL);
 	focus(NULL);
 }
 
@@ -1302,7 +1295,7 @@ focusstack(const Arg *arg)
 {
 	Client *c = NULL, *i;
 
-	if (!selmon->sel)
+	if (!selmon->sel || (selmon->sel->isfullscreen && lockfullscreen))
 		return;
 	if (arg->i > 0) {
 		for (c = selmon->sel->next; c && !ISVISIBLE(c); c = c->next);
@@ -1525,8 +1518,6 @@ manage(Window w, XWindowAttributes *wa)
 	} else {
 		if (!settings_restored)
 			c->mon = selmon;
-		if (c->x == c->mon->wx && c->y == c->mon->wy)
-			c->iscentered = 1;
 		c->bw = borderpx;
 		if (!settings_restored)
 			applyrules(c);
@@ -1552,10 +1543,8 @@ manage(Window w, XWindowAttributes *wa)
 	updatesizehints(c);
 	updatewmhints(c);
 
-	if (c->iscentered) {
-		c->sfx = c->x = c->mon->wx + (c->mon->ww - WIDTH(c)) / 2;
-		c->sfy = c->y = c->mon->wy + (c->mon->wh - HEIGHT(c)) / 2;
-	}
+	c->sfx = c->x = c->mon->wx + (c->mon->ww - WIDTH(c)) / 2;
+	c->sfy = c->y = c->mon->wy + (c->mon->wh - HEIGHT(c)) / 2;
 	if (c->sfw == -9999) {
 		c->sfw = c->w;
 		c->sfh = c->h;
@@ -1625,7 +1614,6 @@ motionnotify(XEvent *e)
 	static Monitor *mon = NULL;
 	Monitor *m;
 	Bar *bar;
-	Client *sel;
 	XMotionEvent *ev = &e->xmotion;
 
 	if ((bar = wintobar(ev->window))) {
@@ -1639,9 +1627,8 @@ motionnotify(XEvent *e)
 	if (ev->window != root)
 		return;
 	if ((m = recttomon(ev->x_root, ev->y_root, 1, 1)) != mon && mon) {
-		sel = selmon->sel;
+		unfocus(selmon->sel, 1, NULL);
 		selmon = m;
-		unfocus(sel, 1, NULL);
 		focus(NULL);
 	}
 	mon = m;
@@ -2434,8 +2421,6 @@ unfocus(Client *c, int setfocus, Client *nextfocus)
 {
 	if (!c)
 		return;
-	if (c->isfullscreen && ISVISIBLE(c) && c->mon == selmon && nextfocus && !nextfocus->isfloating)
-		setfullscreen(c, 0);
 	grabbuttons(c, 0);
 	if (c->isfloating)
 		XSetWindowBorder(dpy, c->win, scheme[SchemeNorm][ColFloat].pixel);

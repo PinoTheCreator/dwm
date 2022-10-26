@@ -5,22 +5,22 @@ static const unsigned int borderpx       = 1;   /* border pixel of windows */
 static const unsigned int snap           = 32;  /* snap pixel */
 static const int swallowfloating         = 0;   /* 1 means swallow floating windows by default */
 static const int scalepreview            = 4;        /* Tag preview scaling */
-static const unsigned int gappih         = 10;  /* horiz inner gap between windows */
+static const unsigned int gappih         = 20;  /* horiz inner gap between windows */
 static const unsigned int gappiv         = 10;  /* vert inner gap between windows */
 static const unsigned int gappoh         = 10;  /* horiz outer gap between windows and screen edge */
-static const unsigned int gappov         = 10;  /* vert outer gap between windows and screen edge */
+static const unsigned int gappov         = 30;  /* vert outer gap between windows and screen edge */
 static const int smartgaps_fact          = 1;   /* gap factor when there is only one client; 0 = no gaps, 3 = 3x outer gaps */
 static const int showbar                 = 1;   /* 0 means no bar */
 static const int topbar                  = 1;   /* 0 means bottom bar */
-static const int vertpad                 = 0;  /* vertical padding of bar */
-static const int sidepad                 = 0;  /* horizontal padding of bar */
+static const int vertpad                 = 10;  /* vertical padding of bar */
+static const int sidepad                 = 10;  /* horizontal padding of bar */
 #define ICONSIZE 20    /* icon size */
 #define ICONSPACING 5  /* space between icon and title */
 /* Status is to be shown on: -1 (all monitors), 0 (a specific monitor by index), 'A' (active monitor) */
 static const int statusmon               = 'A';
-static const unsigned int systrayspacing = 0;   /* systray spacing */
+static const unsigned int systrayspacing = 2;   /* systray spacing */
 static const int showsystray             = 1;   /* 0 means no systray */
-static const unsigned int ulinepad = 2;         /* horizontal padding between the underline and tag */
+static const unsigned int ulinepad = 5;         /* horizontal padding between the underline and tag */
 static const unsigned int ulinestroke  = 2;     /* thickness / height of the underline */
 static const unsigned int ulinevoffset = 0;     /* how far above the bottom of the bar the line should appear */
 static const int ulineall = 0;                  /* 1 to show underline on all tags, 0 for just the active ones */
@@ -31,41 +31,39 @@ static int tagindicatortype              = INDICATOR_TOP_LEFT_SQUARE;
 static int tiledindicatortype            = INDICATOR_NONE;
 static int floatindicatortype            = INDICATOR_TOP_LEFT_SQUARE;
 static const int quit_empty_window_count = 0;   /* only allow dwm to quit if no (<= count) windows are open */
-static const char *fonts[]               = { "monospace:size=10", "Noto Color Emoji:size=10" };
-
-/* COLOURS */
-#include "themes/onedark.h"
+static const char *fonts[]               = { "monospace:size=10" };
+static const char dmenufont[]            = "monospace:size=10";
 
 static char c000000[]                    = "#000000"; // placeholder value
 
-static char normfgcolor[]                = GRAY3;
-static char normbgcolor[]                = BLACK;
-static char normbordercolor[]            = GRAY2;
+static char normfgcolor[]                = "#bbbbbb";
+static char normbgcolor[]                = "#222222";
+static char normbordercolor[]            = "#444444";
 static char normfloatcolor[]             = "#db8fd9";
 
-static char selfgcolor[]                 = GRAY4;
-static char selbgcolor[]                 = BLUE;
-static char selbordercolor[]             = BLUE;
-static char selfloatcolor[]              = BLUE;
+static char selfgcolor[]                 = "#eeeeee";
+static char selbgcolor[]                 = "#005577";
+static char selbordercolor[]             = "#005577";
+static char selfloatcolor[]              = "#005577";
 
-static char titlenormfgcolor[]           = GRAY4;
-static char titlenormbgcolor[]           = BLACK;
+static char titlenormfgcolor[]           = "#bbbbbb";
+static char titlenormbgcolor[]           = "#222222";
 static char titlenormbordercolor[]       = "#444444";
 static char titlenormfloatcolor[]        = "#db8fd9";
 
-static char titleselfgcolor[]            = WHITE;
-static char titleselbgcolor[]            = BLACK;
-static char titleselbordercolor[]        = BLACK;
+static char titleselfgcolor[]            = "#eeeeee";
+static char titleselbgcolor[]            = "#005577";
+static char titleselbordercolor[]        = "#005577";
 static char titleselfloatcolor[]         = "#005577";
 
-static char tagsnormfgcolor[]            = GRAY4;
-static char tagsnormbgcolor[]            = BLACK;
-static char tagsnormbordercolor[]        = BLACK;
+static char tagsnormfgcolor[]            = "#bbbbbb";
+static char tagsnormbgcolor[]            = "#222222";
+static char tagsnormbordercolor[]        = "#444444";
 static char tagsnormfloatcolor[]         = "#db8fd9";
 
-static char tagsselfgcolor[]             = BLUE;
-static char tagsselbgcolor[]             = BLACK;
-static char tagsselbordercolor[]         = BLACK;
+static char tagsselfgcolor[]             = "#eeeeee";
+static char tagsselbgcolor[]             = "#005577";
+static char tagsselbordercolor[]         = "#005577";
 static char tagsselfloatcolor[]          = "#005577";
 
 static char hidnormfgcolor[]             = "#005577";
@@ -95,7 +93,7 @@ static char *colors[][ColCount] = {
 };
 
 
-#define MYTERM "st"
+#define MYTERM "alacritty"
 
 
 /* Tags
@@ -166,7 +164,8 @@ static const Rule rules[] = {
   RULE(.class = MYTERM, .isterminal = 1)
   RULE(.class = "tabbed", .isterminal = 1)
 
-  RULE(.class = "mate-calc", .iscentered = 1)
+  RULE(.class = "mate-calc", .isfloating = 1)
+  RULE(.class = "gcolor3", .isfloating = 1)
 
   RULE(.class = "discord", .tags = 1 << 6, .switchtag = 4)
   RULE(.class = "Spotify", .tags = 1 << 7, .switchtag = 4)
@@ -233,17 +232,16 @@ static const Layout layouts[] = {
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-//static const char *dmenucmd[] = {
-//	"dmenu_run",
-//	"-fn", dmenufont,
-//	"-nb", normbgcolor,
-//	"-nf", normfgcolor,
-//	"-sb", selbgcolor,
-//	"-sf", selfgcolor,
-//	topbar ? NULL : "-b",
-//	NULL
-//};
-//static const char *termcmd[]  = { "st", NULL };
+// static const char *dmenucmd[] = {
+// 	"dmenu_run",
+// 	"-fn", dmenufont,
+// 	"-nb", normbgcolor,
+// 	"-nf", normfgcolor,
+// 	"-sb", selbgcolor,
+// 	"-sf", selfgcolor,
+// 	NULL
+// };
+// static const char *termcmd[]  = { "st", NULL };
 
 /* This defines the name of the executable that handles the bar (used for signalling purposes) */
 #define STATUSBAR "dwmblocks"
@@ -281,6 +279,8 @@ static const Key keys[] = {
 //	{ MODKEY|Mod4Mask,              XK_0,          togglegaps,             {0} },
 //	{ MODKEY|Mod4Mask|ShiftMask,    XK_0,          defaultgaps,            {0} },
 	{ MODKEY,                       XK_Tab,        view,                   {0} },
+	{ MODKEY|ControlMask,           XK_Left,       shiftboth,              { .i = -1 } }, // note keybinding conflict with focusadjacenttag tagandviewtoleft
+	{ MODKEY|ControlMask,           XK_Right,      shiftboth,              { .i = +1 } }, // note keybinding conflict with focusadjacenttag tagandviewtoright
 	{ MODKEY|ShiftMask,             XK_c,          killclient,             {0} },
 	{ MODKEY|ShiftMask,             XK_q,          quit,                   {1} },
 	{ MODKEY|ControlMask|ShiftMask, XK_q,          quit,                   {0} },
@@ -291,6 +291,7 @@ static const Key keys[] = {
   { MODKEY,                       XK_minus,      setlayout,              {.v = &layouts[4]} },
 	{ MODKEY,                       XK_space,      setlayout,              {0} },
 	{ MODKEY|ShiftMask,             XK_space,      togglefloating,         {0} },
+	{ MODKEY|ShiftMask,             XK_f,          fullscreen,             {0} },
 	{ MODKEY,                       XK_0,          view,                   {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,          tag,                    {.ui = ~0 } },
 	{ MODKEY,                       XK_comma,      focusmon,               {.i = -1 } },
