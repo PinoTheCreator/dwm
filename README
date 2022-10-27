@@ -1,48 +1,50 @@
-dwm - dynamic window manager
-============================
-dwm is an extremely fast, small, and dynamic window manager for X.
-
-
-Requirements
-------------
-In order to build dwm you need the Xlib header files.
-
-
-Installation
-------------
-Edit config.mk to match your local setup (dwm is installed into
-the /usr/local namespace by default).
-
-Afterwards enter the following command to build and install dwm (if
-necessary as root):
-
-    make clean install
-
-
-Running dwm
------------
-Add the following line to your .xinitrc to start dwm using startx:
-
-    exec dwm
-
-In order to connect dwm to a specific display, make sure that
-the DISPLAY environment variable is set correctly, e.g.:
-
-    DISPLAY=foo.bar:1 exec dwm
-
-(This will start dwm on display :1 of the host foo.bar.)
-
-In order to display status info in the bar, you can do something
-like this in your .xinitrc:
-
-    while xsetroot -name "`date` `uptime | sed 's/.*,//'`"
-    do
-    	sleep 1
-    done &
-    exec dwm
-
-
-Configuration
--------------
-The configuration of dwm is done by creating a custom config.h
-and (re)compiling the source code.
+# Custom build of dwm-flexipatch
+The patches used in this build are:
+- BAR_DWMBLOCKS_PATCH 1
+- BAR_LTSYMBOL_PATCH 1
+- BAR_TAGPREVIEW_PATCH 1
+- BAR_STATUS_PATCH 1
+- BAR_STATUSCMD_PATCH 1
+- BAR_STATUS2D_PATCH 1
+- BAR_SYSTRAY_PATCH 1
+- BAR_TAGS_PATCH 1
+- BAR_UNDERLINETAGS_PATCH 1
+- BAR_WINICON_PATCH 1
+- BAR_WINTITLE_PATCH 1
+- BAR_TITLE_RIGHT_PAD_PATCH 1
+- BAR_TITLE_LEFT_PAD_PATCH 1
+- BAR_CENTEREDWINDOWNAME_PATCH 1
+- BAR_HIDEVACANTTAGS_PATCH 1
+- BAR_PADDING_PATCH 1
+- ATTACHBOTTOM_PATCH 1
+- AUTORESIZE_PATCH 1
+- CENTER_PATCH 1
+- CENTER_TRANSIENT_WINDOWS_BY_PARENT_PATCH 1
+- CFACTS_PATCH 1
+- DRAGCFACT_PATCH 1
+- DRAGMFACT_PATCH 1
+- FAKEFULLSCREEN_PATCH 1
+- FULLSCREEN_PATCH 1
+- LG3D_PATCH 1
+- NOBORDER_PATCH 1
+- NO_TRANSPARENT_BORDERS_PATCH 1
+- ONLY_ONE_RULE_MATCH_PATCH 1
+- ONLYQUITONEMPTY_PATCH 1
+- PERTAG_PATCH 1
+- PLACEMOUSE_PATCH 1
+- RESIZECORNERS_PATCH 1
+- RESTARTSIG_PATCH 1
+- SAVEFLOATS_PATCH 1
+- SEAMLESS_RESTART_PATCH 1
+- SENDMON_KEEPFOCUS_PATCH 1
+- SHIFTBOTH_PATCH 1
+- STEAM_PATCH 1
+- SWALLOW_PATCH 1
+- SWITCHTAG_PATCH 1
+- VANITYGAPS_PATCH 1
+- WINDOWROLERULE_PATCH 1
+- ZOOMSWAP_PATCH 1
+- CENTEREDMASTER_LAYOUT 1
+- HORIZGRID_LAYOUT 1
+- TILE_LAYOUT 1
+- MONOCLE_LAYOUT 1

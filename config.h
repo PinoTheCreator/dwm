@@ -12,8 +12,8 @@ static const unsigned int gappov         = 30;  /* vert outer gap between window
 static const int smartgaps_fact          = 1;   /* gap factor when there is only one client; 0 = no gaps, 3 = 3x outer gaps */
 static const int showbar                 = 1;   /* 0 means no bar */
 static const int topbar                  = 1;   /* 0 means bottom bar */
-static const int vertpad                 = 10;  /* vertical padding of bar */
-static const int sidepad                 = 10;  /* horizontal padding of bar */
+static const int vertpad                 = 0;  /* vertical padding of bar */
+static const int sidepad                 = 0;  /* horizontal padding of bar */
 #define ICONSIZE 20    /* icon size */
 #define ICONSPACING 5  /* space between icon and title */
 /* Status is to be shown on: -1 (all monitors), 0 (a specific monitor by index), 'A' (active monitor) */
@@ -31,8 +31,7 @@ static int tagindicatortype              = INDICATOR_TOP_LEFT_SQUARE;
 static int tiledindicatortype            = INDICATOR_NONE;
 static int floatindicatortype            = INDICATOR_TOP_LEFT_SQUARE;
 static const int quit_empty_window_count = 0;   /* only allow dwm to quit if no (<= count) windows are open */
-static const char *fonts[]               = { "monospace:size=10" };
-static const char dmenufont[]            = "monospace:size=10";
+static const char *fonts[]               = { "Fira Code:size=10" };
 
 static char c000000[]                    = "#000000"; // placeholder value
 
@@ -164,8 +163,8 @@ static const Rule rules[] = {
   RULE(.class = MYTERM, .isterminal = 1)
   RULE(.class = "tabbed", .isterminal = 1)
 
-  RULE(.class = "mate-calc", .isfloating = 1)
-  RULE(.class = "gcolor3", .isfloating = 1)
+  RULE(.class = "Mate-calc", .isfloating = 1, .iscentered = 1)
+  RULE(.class = "Gcolor3", .isfloating = 1, .iscentered = 1)
 
   RULE(.class = "discord", .tags = 1 << 6, .switchtag = 4)
   RULE(.class = "Spotify", .tags = 1 << 7, .switchtag = 4)
@@ -174,7 +173,7 @@ static const Rule rules[] = {
   RULE(.class = "brave", .noswallow = 1)
   RULE(.class = "surf", .noswallow = 1)
   RULE(.class = "zbarimg", .noswallow = 1)
-  RULE(.class = NULL, .title="Event Tester", .noswallow = 1)
+  RULE(.class = NULL, .title = "Event Tester", .noswallow = 1)
 };
 
 
@@ -234,14 +233,9 @@ static const Layout layouts[] = {
 /* commands */
 // static const char *dmenucmd[] = {
 // 	"dmenu_run",
-// 	"-fn", dmenufont,
-// 	"-nb", normbgcolor,
-// 	"-nf", normfgcolor,
-// 	"-sb", selbgcolor,
-// 	"-sf", selfgcolor,
 // 	NULL
 // };
-// static const char *termcmd[]  = { "st", NULL };
+// static const char *termcmd[]  = { MYTERM, NULL };
 
 /* This defines the name of the executable that handles the bar (used for signalling purposes) */
 #define STATUSBAR "dwmblocks"
