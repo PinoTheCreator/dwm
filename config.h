@@ -92,8 +92,6 @@ static char *colors[][ColCount] = {
 };
 
 
-#define MYTERM "alacritty"
-
 
 /* Tags
  * In a traditional dwm the number of tags in use can be changed simply by changing the number
@@ -129,6 +127,8 @@ static char *tagicons[][NUMTAGS] =
 	[ALT_TAGS_DECORATION] = { "<1>", "<2>", "<3>", "<4>", "<5>", "<6>", "<7>", "<8>", "<9>" },
 };
 
+#define MYTERM "st"
+
 
 /* There are two options when it comes to per-client rules:
  *  - a typical struct table or
@@ -160,17 +160,21 @@ static const Rule rules[] = {
 	RULE(.wintype = WTYPE "TOOLBAR", .isfloating = 1)
 	RULE(.wintype = WTYPE "SPLASH", .isfloating = 1)
 
-  RULE(.class = MYTERM, .isterminal = 1)
+  // RULE(.class = MYTERM, .isterminal = 1)
+  RULE(.class = "st", .isterminal = 1)
+  RULE(.class = "kitty", .isterminal = 1)
   RULE(.class = "tabbed", .isterminal = 1)
 
   RULE(.class = "Mate-calc", .isfloating = 1, .iscentered = 1)
   RULE(.class = "Gcolor3", .isfloating = 1, .iscentered = 1)
+  RULE(.class = "Dragon-drop", .isfloating = 1, .iscentered = 1)
 
-  RULE(.class = "discord", .tags = 1 << 6, .switchtag = 4)
+  RULE(.class = "WebCord", .tags = 1 << 6, .switchtag = 4)
   RULE(.class = "spotify", .tags = 1 << 7, .switchtag = 4)
   RULE(.class = "Steam", .tags = 1 << 8, .switchtag = 4)
 
-  RULE(.class = "brave", .noswallow = 1)
+  RULE(.class = "dragon-drop", .noswallow = 1)
+  RULE(.class = "firefox", .noswallow = 1)
   RULE(.class = "surf", .noswallow = 1)
   RULE(.class = "zbarimg", .noswallow = 1)
   RULE(.class = NULL, .title = "Event Tester", .noswallow = 1)
@@ -193,17 +197,18 @@ static const Rule rules[] = {
 static const BarRule barrules[] = {
 	/* monitor   bar    alignment         widthfunc                 drawfunc                clickfunc                hoverfunc                name */
 	{ -1,        0,     BAR_ALIGN_LEFT,   width_tags,               draw_tags,              click_tags,              hover_tags,              "tags" },
-	{  0,        0,     BAR_ALIGN_RIGHT,  width_systray,            draw_systray,           click_systray,           NULL,                    "systray" },
 	{ -1,        0,     BAR_ALIGN_LEFT,   width_ltsymbol,           draw_ltsymbol,          click_ltsymbol,          NULL,                    "layout" },
+  {  0,        0,     BAR_ALIGN_RIGHT,  width_systray,            draw_systray,           click_systray,           NULL,                    "systray" },
 	{ statusmon, 0,     BAR_ALIGN_RIGHT,  width_status2d,           draw_status2d,          click_statuscmd,         NULL,                    "status2d" },
-	{ -1,        0,     BAR_ALIGN_NONE,   width_wintitle,           draw_wintitle,          click_wintitle,          NULL,                    "wintitle" },
+//	{ -1,        0,     BAR_ALIGN_NONE,   width_wintitle,           draw_wintitle,          click_wintitle,          NULL,                    "wintitle" },
+	{ -1,        0,     BAR_ALIGN_LEFT,   width_wintitle,           draw_wintitle,          click_wintitle,          NULL,                    "wintitle" },
 };
 
 /* layout(s) */
 static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
-static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
+static const int lockfullscreen = 0; /* 1 will force focus on the fullscreen window */
 
 
 
@@ -276,8 +281,8 @@ static const Key keys[] = {
 	{ MODKEY|ControlMask,           XK_Left,       shiftboth,              { .i = -1 } }, // note keybinding conflict with focusadjacenttag tagandviewtoleft
 	{ MODKEY|ControlMask,           XK_Right,      shiftboth,              { .i = +1 } }, // note keybinding conflict with focusadjacenttag tagandviewtoright
 	{ MODKEY|ShiftMask,             XK_c,          killclient,             {0} },
-	{ MODKEY|ShiftMask,             XK_q,          quit,                   {1} },
-	{ MODKEY|ControlMask|ShiftMask, XK_q,          quit,                   {0} },
+	{ MODKEY|ShiftMask,             XK_q,          quit,                   {0} },
+	{ MODKEY|ControlMask|ShiftMask, XK_q,          quit,                   {1} },
 	{ MODKEY,                       XK_t,          setlayout,              {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,          setlayout,              {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,          setlayout,              {.v = &layouts[2]} },
