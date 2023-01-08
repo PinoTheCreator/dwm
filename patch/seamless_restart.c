@@ -69,7 +69,7 @@ void setmonitorfields(Monitor *m)
 		uint32_t data[] = {
 			(m->pertag->nmasters[i] & 0x7) |
 			(getlayoutindex(m->pertag->ltidxs[i][m->pertag->sellts[i]]) & 0xF) << 6 |
-			m->showbar << 31
+			m->pertag->showbars[i] << 31
 		};
 
 		XChangeProperty(dpy, root, monitor_fields, XA_CARDINAL, 32,
@@ -122,12 +122,13 @@ getmonitorfields(Monitor *m)
 		layout_index = (state >> 6) & 0xF;
 		if (layout_index < LENGTH(layouts))
 			m->pertag->ltidxs[i][m->pertag->sellts[i]] = &layouts[layout_index];
+		m->pertag->showbars[i] = (state >> 31) & 0x1;
 
 		if (!restored && i && (tags & (1 << i))) {
 			m->nmaster = m->pertag->nmasters[i];
 			m->sellt = m->pertag->sellts[i];
 			m->lt[m->sellt] = m->pertag->ltidxs[i][m->sellt];
-			m->showbar = (state >> 31) & 0x1;
+			m->showbar = m->pertag->showbars[i];
 			restored = 1;
 		}
 
@@ -203,6 +204,8 @@ setclientfields(Client *c)
 		| (c->isterminal & 0x1) << 13
 		| (c->noswallow & 0x1) << 14
 		| (c->issteam & 0x1) << 15
+		| (c->issticky & 0x1) << 16
+		| (c->isfreesize & 0x1) << 18
 	};
 	XChangeProperty(dpy, c->win, clientatom[ClientFields], XA_CARDINAL, 32, PropModeReplace, (unsigned char *)data, 1);
 }
@@ -226,6 +229,8 @@ getclientfields(Client *c)
 	c->isterminal = (fields >> 13) & 0x1;
 	c->noswallow = (fields >> 14) & 0x1;
 	c->issteam = (fields >> 15) & 0x1;
+	c->issticky = (fields >> 16) & 0x1;
+	c->isfreesize = (fields >> 18) & 0x1;
 	return 1;
 }
 
@@ -310,6 +315,13 @@ restorewindowfloatposition(Client *c, Monitor *m)
 	c->sfy = m->my + y;
 	c->sfw = w;
 	c->sfh = h;
+
+	if (c->isfloating) {
+		c->x = c->sfx;
+		c->y = c->sfy;
+		c->w = c->sfw;
+		c->h = c->sfh;
+	}
 
 	return 1;
 }

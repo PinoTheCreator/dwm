@@ -7,11 +7,14 @@ shift(const Arg *arg, int clients)
 
 	shifted.ui = selmon->tagset[selmon->seltags];
 
+	Monitor *origselmon = selmon;
+	for (selmon = mons; selmon; selmon = selmon->next)
 	for (c = selmon->clients; c && clients; c = c->next) {
 		if (c == selmon->sel)
 			continue;
 		tagmask |= c->tags;
 	}
+	selmon = origselmon;
 
 	do {
 		if (arg->i > 0) // left circular shift
