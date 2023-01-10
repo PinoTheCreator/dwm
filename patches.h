@@ -130,7 +130,7 @@
  *
  * https://dwm.suckless.org/patches/tag-previews/
  */
-#define BAR_TAGPREVIEW_PATCH 1
+#define BAR_TAGPREVIEW_PATCH 0
 
 /* Show status in bar */
 #define BAR_STATUS_PATCH 1
@@ -1069,7 +1069,7 @@
  * if it is available in config.h for the given client.
  * https://dwm.suckless.org/patches/sizehints/
  */
-#define SIZEHINTS_RULED_PATCH 0
+#define SIZEHINTS_RULED_PATCH 1
 
 /* This patch makes dwm obey even "soft" sizehints for new clients. The isfreesize
  * version is similar to the sizehints ruled patch except it allows you to specify
@@ -1082,7 +1082,7 @@
  *
  * https://dwm.suckless.org/patches/sizehints/
  */
-#define SIZEHINTS_ISFREESIZE_PATCH 1
+#define SIZEHINTS_ISFREESIZE_PATCH 0
 
 /* In a multi-head setup monitor 0 is by default the primary screen, with the left and right
  * screen being monitor 1 and 2 respectively. This patch sorts screens left to right (or
@@ -1347,7 +1347,7 @@
 /* Simple patch that allows floating windows to be zoomed into the master stack position.
  * https://www.reddit.com/r/suckless/comments/ie5fe3/zoomfloating_my_own_simple_original_patch/
  */
-#define ZOOMFLOATING_PATCH 0
+#define ZOOMFLOATING_PATCH 1
 
 /* The zoomswap patch allows a master and a stack window to swap places
  * rather than every window on the screen changing position.

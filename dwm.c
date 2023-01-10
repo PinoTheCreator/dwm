@@ -219,7 +219,6 @@ struct Client {
 	int needresize;
 	int iscentered;
 	int beingmoved;
-	int isfreesize;
 	int isterminal, noswallow;
 	pid_t pid;
 	int issteam;
@@ -270,9 +269,6 @@ struct Monitor {
 	Bar *bar;
 	const Layout *lt[2];
 	Pertag *pertag;
-	Window tagwin;
-	int previewshow;
-	Pixmap tagmap[NUMTAGS];
 };
 
 typedef struct {
@@ -285,7 +281,6 @@ typedef struct {
 	int switchtag;
 	int iscentered;
 	int isfloating;
-	int isfreesize;
 	int isterminal;
 	int noswallow;
 	int monitor;
@@ -467,7 +462,6 @@ applyrules(Client *c)
 
 	/* rule matching */
 	c->noswallow = -1;
-	c->isfreesize = 1;
 	c->isfloating = 0;
 	c->tags = 0;
 	XGetClassHint(dpy, c->win, &ch);
@@ -490,7 +484,6 @@ applyrules(Client *c)
 			c->iscentered = r->iscentered;
 			c->isterminal = r->isterminal;
 			c->noswallow = r->noswallow;
-			c->isfreesize = r->isfreesize;
 			c->isfloating = r->isfloating;
 			c->tags |= r->tags;
 			for (m = mons; m && m->num != r->monitor; m = m->next);
@@ -776,11 +769,6 @@ cleanupmon(Monitor *mon)
 		free(bar);
 	}
 	free(mon->pertag);
-	for (size_t i = 0; i < NUMTAGS; i++)
-		if (mon->tagmap[i])
-			XFreePixmap(dpy, mon->tagmap[i]);
-	XUnmapWindow(dpy, mon->tagwin);
-	XDestroyWindow(dpy, mon->tagwin);
 	free(mon);
 }
 
@@ -883,7 +871,6 @@ configurenotify(XEvent *e)
 			for (m = mons; m; m = m->next) {
 				for (bar = m->bar; bar; bar = bar->next)
 					XMoveResizeWindow(dpy, bar->win, bar->bx, bar->by, bar->bw, bar->bh);
-				createpreview(m);
 			}
 			focus(NULL);
 			arrange(NULL);
@@ -1655,8 +1642,6 @@ motionnotify(XEvent *e)
 		return;
 	}
 
-	if (selmon->previewshow != 0)
-		hidetagpreview(selmon);
 
 	if (ev->window != root)
 		return;
@@ -2438,7 +2423,6 @@ toggleview(const Arg *arg)
 
 
 	if (newtagset) {
-		tagpreviewswitchtag();
 		selmon->tagset[selmon->seltags] = newtagset;
 
 		if (newtagset == ~0)
@@ -2562,7 +2546,7 @@ updatebars(void)
 	XSetWindowAttributes wa = {
 		.override_redirect = True,
 		.background_pixmap = ParentRelative,
-		.event_mask = ButtonPressMask|ExposureMask|PointerMotionMask
+		.event_mask = ButtonPressMask|ExposureMask
 	};
 	XClassHint ch = {"dwm", "dwm"};
 	for (m = mons; m; m = m->next) {
@@ -2773,12 +2757,13 @@ updatesizehints(Client *c)
 		c->maxa = (float)size.max_aspect.x / size.max_aspect.y;
 	} else
 		c->maxa = c->mina = 0.0;
-	if ((size.flags & PSize) && c->isfreesize)
+	if (size.flags & PSize)
 	{
 		c->basew = size.base_width;
 		c->baseh = size.base_height;
 		c->isfloating = 1;
 	}
+	checkfloatingrules(c);
 	c->isfixed = (c->maxw && c->maxh && c->maxw == c->minw && c->maxh == c->minh);
 	c->hintsvalid = 1;
 }
@@ -2840,7 +2825,6 @@ view(const Arg *arg)
 	{
 		return;
 	}
-	tagpreviewswitchtag();
 	selmon->seltags ^= 1; /* toggle sel tagset */
 	pertagview(arg);
 	}

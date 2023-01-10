@@ -4,7 +4,6 @@
 static const unsigned int borderpx       = 1;   /* border pixel of windows */
 static const unsigned int snap           = 32;  /* snap pixel */
 static const int swallowfloating         = 0;   /* 1 means swallow floating windows by default */
-static const int scalepreview            = 4;        /* Tag preview scaling */
 static int nomodbuttons                  = 1;   /* allow client mouse button bindings that have no modifier */
 static const unsigned int gappih         = 20;  /* horiz inner gap between windows */
 static const unsigned int gappiv         = 10;  /* vert inner gap between windows */
@@ -33,7 +32,7 @@ static int tagindicatortype              = INDICATOR_TOP_LEFT_SQUARE;
 static int tiledindicatortype            = INDICATOR_NONE;
 static int floatindicatortype            = INDICATOR_TOP_LEFT_SQUARE;
 static const int quit_empty_window_count = 0;   /* only allow dwm to quit if no (<= count) windows are open */
-static const char *fonts[]               = { "SF Pro Text:size=12" };
+static const char *fonts[]               = { "SF Pro Text:size=12"/*, "Noto Color Emoji"*/ };
 static const char dmenufont[]            = "SF Pro Text:size=12";
 
 static char c000000[]                    = "#000000"; // placeholder value
@@ -165,15 +164,14 @@ static const Rule rules[] = {
 	RULE(.wintype = WTYPE "SPLASH", .isfloating = 1)
 
   RULE(.class = MYTERM, .isterminal = 1)
-  RULE(.class = "st", .isterminal = 1)
-  RULE(.class = "kitty", .isterminal = 1)
   RULE(.class = "tabbed", .isterminal = 1)
 
   RULE(.class = "Qalculate-gtk", .isfloating = 1, .iscentered = 1)
   RULE(.class = "Gcolor3", .isfloating = 1, .iscentered = 1)
-  RULE(.class = "Dragon-drop", .isfloating = 1, .iscentered = 1)
+  RULE(.class = "Dragon-drop", .isfloating = 1, .iscentered = 1, .noswallow = 1)
 
   RULE(.class = "WebCord", .tags = 1 << 6, .switchtag = 4)
+  RULE(.class = "discord", .tags = 1 << 6, .switchtag = 4)
   RULE(.class = "spotify", .tags = 1 << 7, .switchtag = 4)
   RULE(.class = "Steam", .tags = 1 << 8, .switchtag = 4)
 
@@ -290,12 +288,12 @@ static const Key keys[] = {
 	//{ MODKEY|Mod4Mask,              XK_0,          togglegaps,             {0} },
 	//{ MODKEY|Mod4Mask|ShiftMask,    XK_0,          defaultgaps,            {0} },
 	{ MODKEY,                       XK_Tab,        view,                   {0} },
-	{ MODKEY|ShiftMask|ControlMask, XK_Left,       shifttagclients,        { .i = -1 } },
-	{ MODKEY|ShiftMask|ControlMask, XK_Right,      shifttagclients,        { .i = +1 } },
-	{ MODKEY|Mod4Mask,              XK_Tab,        shiftviewclients,       { .i = -1 } },
-	{ MODKEY|Mod4Mask,              XK_backslash,  shiftviewclients,       { .i = +1 } },
-	{ MODKEY|ControlMask,           XK_Left,       shiftboth,              { .i = -1 } }, // note keybinding conflict with focusadjacenttag tagandviewtoleft
-	{ MODKEY|ControlMask,           XK_Right,      shiftboth,              { .i = +1 } }, // note keybinding conflict with focusadjacenttag tagandviewtoright
+	{ MODKEY|ShiftMask,             XK_Left,       shifttagclients,        { .i = -1 } },
+	{ MODKEY|ShiftMask,             XK_Right,      shifttagclients,        { .i = +1 } },
+	{ MODKEY|ControlMask,           XK_Tab,        shiftviewclients,       { .i = -1 } },
+	{ MODKEY|ControlMask,           XK_backslash,  shiftviewclients,       { .i = +1 } },
+	{ MODKEY|ControlMask|ShiftMask, XK_Left,       shiftboth,              { .i = -1 } }, // note keybinding conflict with focusadjacenttag tagandviewtoleft
+	{ MODKEY|ControlMask|ShiftMask, XK_Right,      shiftboth,              { .i = +1 } }, // note keybinding conflict with focusadjacenttag tagandviewtoright
 	{ MODKEY|ShiftMask,             XK_c,          killclient,             {0} },
 	{ MODKEY|ShiftMask,             XK_q,          quit,                   {0} },
 	{ MODKEY|ControlMask|ShiftMask, XK_q,          quit,                   {1} },

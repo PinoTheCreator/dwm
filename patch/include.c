@@ -9,7 +9,6 @@
 #include "bar_status2d.c"
 #include "bar_statuscmd.c"
 #include "bar_winicon.c"
-#include "bar_tagpreview.c"
 #include "bar_tags.c"
 #include "bar_wintitle.c"
 #include "bar_systray.c"
@@ -28,6 +27,7 @@
 #include "shiftboth.c"
 #include "shifttagclients.c"
 #include "shiftviewclients.c"
+#include "sizehints_ruled.c"
 #ifdef XINERAMA
 #include "sortscreens.c"
 #endif // XINERAMA
