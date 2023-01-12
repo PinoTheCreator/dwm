@@ -564,7 +564,7 @@
  * like chromium (with "Use system title bar and borders" turned off) or vlc in fullscreen mode.
  * https://dwm.suckless.org/patches/decoration_hints/
  */
-#define DECORATION_HINTS_PATCH 0
+#define DECORATION_HINTS_PATCH 1
 
 /* This feature distributes all clients on the current monitor evenly across all tags.
  * It is a variant of the reorganizetags patch.
@@ -1069,7 +1069,7 @@
  * if it is available in config.h for the given client.
  * https://dwm.suckless.org/patches/sizehints/
  */
-#define SIZEHINTS_RULED_PATCH 1
+#define SIZEHINTS_RULED_PATCH 0
 
 /* This patch makes dwm obey even "soft" sizehints for new clients. The isfreesize
  * version is similar to the sizehints ruled patch except it allows you to specify
@@ -1082,7 +1082,7 @@
  *
  * https://dwm.suckless.org/patches/sizehints/
  */
-#define SIZEHINTS_ISFREESIZE_PATCH 0
+#define SIZEHINTS_ISFREESIZE_PATCH 1
 
 /* In a multi-head setup monitor 0 is by default the primary screen, with the left and right
  * screen being monitor 1 and 2 respectively. This patch sorts screens left to right (or
@@ -1242,7 +1242,7 @@
  * two-finger scrolling is configured in libinput.
  * https://dwm.suckless.org/patches/tapresize/
  */
-#define TAPRESIZE_PATCH 0
+#define TAPRESIZE_PATCH 1
 
 /* This patch allows you to toggle fullscreen on and off using a single shortcut key.
  * https://github.com/bakkeby/patches/blob/master/dwm/dwm-togglefullscreen-6.2.diff
@@ -1259,7 +1259,7 @@
  * https://github.com/bakkeby/patches/wiki/togglelayout
  */
 
-#define TOGGLELAYOUT_PATCH 1
+#define TOGGLELAYOUT_PATCH 0
 
 /* Minor patch that lets you use the same keyboard shortcut to toggle to the previous tag if the
  * designated tag is already active.

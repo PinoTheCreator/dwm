@@ -16,6 +16,7 @@
 /* Other patches */
 #include "attachx.h"
 #include "cfacts.h"
+#include "decorationhints.h"
 #include "dragcfact.h"
 #include "dragmfact.h"
 #include "fullscreen.h"
@@ -29,7 +30,6 @@
 #include "shiftboth.h"
 #include "shifttagclients.h"
 #include "shiftviewclients.h"
-#include "sizehints_ruled.h"
 #ifdef XINERAMA
 #include "sortscreens.h"
 #endif // XINERAMA
@@ -37,6 +37,7 @@
 #include "swallow.h"
 #include "tagall.h"
 #include "tagallmon.h"
+#include "tapresize.h"
 #include "vanitygaps.h"
 #include "warp.h"
 #include "zoomswap.h"

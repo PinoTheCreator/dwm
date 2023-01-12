@@ -219,6 +219,7 @@ struct Client {
 	int needresize;
 	int iscentered;
 	int beingmoved;
+	int isfreesize;
 	int isterminal, noswallow;
 	pid_t pid;
 	int issteam;
@@ -281,6 +282,7 @@ typedef struct {
 	int switchtag;
 	int iscentered;
 	int isfloating;
+	int isfreesize;
 	int isterminal;
 	int noswallow;
 	int monitor;
@@ -462,6 +464,7 @@ applyrules(Client *c)
 
 	/* rule matching */
 	c->noswallow = -1;
+	c->isfreesize = 1;
 	c->isfloating = 0;
 	c->tags = 0;
 	XGetClassHint(dpy, c->win, &ch);
@@ -484,6 +487,7 @@ applyrules(Client *c)
 			c->iscentered = r->iscentered;
 			c->isterminal = r->isterminal;
 			c->noswallow = r->noswallow;
+			c->isfreesize = r->isfreesize;
 			c->isfloating = r->isfloating;
 			c->tags |= r->tags;
 			for (m = mons; m && m->num != r->monitor; m = m->next);
@@ -1559,6 +1563,7 @@ manage(Window w, XWindowAttributes *wa)
 	configure(c); /* propagates border_width, if size doesn't change */
 	updatesizehints(c);
 	updatewmhints(c);
+	updatemotifhints(c);
 
 	if (c->iscentered) {
 		c->sfx = c->x = c->mon->wx + (c->mon->ww - WIDTH(c)) / 2;
@@ -1773,6 +1778,8 @@ propertynotify(XEvent *e)
 			if (c == c->mon->sel)
 				drawbar(c->mon);
 		}
+		if (ev->atom == motifatom)
+			updatemotifhints(c);
 		else if (ev->atom == netatom[NetWMIcon]) {
 			updateicon(c);
 			if (c == c->mon->sel)
@@ -2121,9 +2128,11 @@ setfullscreen(Client *c, int fullscreen)
 void
 setlayout(const Arg *arg)
 {
+	if (!arg || !arg->v || arg->v != selmon->lt[selmon->sellt]) {
 		selmon->pertag->sellts[selmon->pertag->curtag] ^= 1;
 		selmon->sellt = selmon->pertag->sellts[selmon->pertag->curtag];
-	if (arg && arg->v && arg->v != selmon->lt[selmon->sellt ^ 1])
+	}
+	if (arg && arg->v)
 		selmon->pertag->ltidxs[selmon->pertag->curtag][selmon->sellt] = (Layout *)arg->v;
 	selmon->lt[selmon->sellt] = selmon->pertag->ltidxs[selmon->pertag->curtag][selmon->sellt];
 
@@ -2204,6 +2213,7 @@ setup(void)
 	netatom[NetWMWindowType] = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", False);
 	netatom[NetClientList] = XInternAtom(dpy, "_NET_CLIENT_LIST", False);
 	netatom[NetClientListStacking] = XInternAtom(dpy, "_NET_CLIENT_LIST_STACKING", False);
+	motifatom = XInternAtom(dpy, "_MOTIF_WM_HINTS", False);
 	/* init cursors */
 	cursor[CurNormal] = drw_cur_create(drw, XC_left_ptr);
 	cursor[CurResize] = drw_cur_create(drw, XC_sizing);
@@ -2757,13 +2767,12 @@ updatesizehints(Client *c)
 		c->maxa = (float)size.max_aspect.x / size.max_aspect.y;
 	} else
 		c->maxa = c->mina = 0.0;
-	if (size.flags & PSize)
+	if ((size.flags & PSize) && c->isfreesize)
 	{
 		c->basew = size.base_width;
 		c->baseh = size.base_height;
 		c->isfloating = 1;
 	}
-	checkfloatingrules(c);
 	c->isfixed = (c->maxw && c->maxh && c->maxw == c->minw && c->maxh == c->minh);
 	c->hintsvalid = 1;
 }

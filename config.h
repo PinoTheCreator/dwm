@@ -163,24 +163,26 @@ static const Rule rules[] = {
 	RULE(.wintype = WTYPE "TOOLBAR", .isfloating = 1)
 	RULE(.wintype = WTYPE "SPLASH", .isfloating = 1)
 
-  RULE(.class = MYTERM, .isterminal = 1)
-  RULE(.class = "tabbed", .isterminal = 1)
+    RULE(.class = MYTERM, .isterminal = 1)
+    RULE(.class = "tabbed", .isterminal = 1)
 
-  RULE(.class = "Qalculate-gtk", .isfloating = 1, .iscentered = 1)
-  RULE(.class = "Gcolor3", .isfloating = 1, .iscentered = 1)
-  RULE(.class = "Dragon-drop", .isfloating = 1, .iscentered = 1, .noswallow = 1)
+    RULE(.class = "Qalculate-gtk", .isfloating = 1, .iscentered = 1)
+    RULE(.class = "Gcolor3", .isfloating = 1, .iscentered = 1)
+    RULE(.class = "Dragon-drop", .isfloating = 1, .iscentered = 1, .noswallow = 1)
 
-  RULE(.class = "WebCord", .tags = 1 << 6, .switchtag = 4)
-  RULE(.class = "discord", .tags = 1 << 6, .switchtag = 4)
-  RULE(.class = "spotify", .tags = 1 << 7, .switchtag = 4)
-  RULE(.class = "Steam", .tags = 1 << 8, .switchtag = 4)
+    RULE(.class = "mpv", .isfloating = 0)
 
-  RULE(.class = "dragon-drop", .noswallow = 1)
-  RULE(.class = "firefox", .noswallow = 1)
-  RULE(.class = "Brave-browser", .noswallow = 1)
-  RULE(.class = "surf", .noswallow = 1)
-  RULE(.class = "zbarimg", .noswallow = 1)
-  RULE(.class = NULL, .title = "Event Tester", .noswallow = 1)
+    RULE(.class = "WebCord", .tags = 1 << 6, .switchtag = 4)
+    RULE(.class = "discord", .tags = 1 << 6, .switchtag = 4)
+    RULE(.class = "spotify", .tags = 1 << 7, .switchtag = 4)
+    RULE(.class = "Steam", .tags = 1 << 8, .switchtag = 4)
+
+    RULE(.class = "dragon-drop", .noswallow = 1)
+    RULE(.class = "firefox", .noswallow = 1)
+    RULE(.class = "Brave-browser", .noswallow = 1)
+    RULE(.class = "surf", .noswallow = 1)
+    RULE(.class = "zbarimg", .noswallow = 1)
+    RULE(.class = NULL, .title = "Event Tester", .noswallow = 1)
 };
 
 
@@ -211,6 +213,20 @@ static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] 
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 0; /* 1 will force focus on the fullscreen window */
+static const int decorhints  = 1;    /* 1 means respect decoration hints */
+
+
+
+/* mouse scroll resize */
+static const int scrollsensetivity = 30; /* 1 means resize window by 1 pixel for each scroll event */
+/* resizemousescroll direction argument list */
+static const int scrollargs[][2] = {
+	/* width change         height change */
+	{ +scrollsensetivity,	0 },
+	{ -scrollsensetivity,	0 },
+	{ 0, 				  	+scrollsensetivity },
+	{ 0, 					-scrollsensetivity },
+};
 
 
 
@@ -369,6 +385,10 @@ static const Button buttons[] = {
 	{ ClkClientWin,         MODKEY,              Button1,        moveorplace,    {.i = 1} },
 	{ ClkClientWin,         MODKEY,              Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,              Button3,        resizemouse,    {0} },
+    { ClkClientWin,         MODKEY,              Button4,        resizemousescroll, {.v = &scrollargs[0]} },
+    { ClkClientWin,         MODKEY,              Button5,        resizemousescroll, {.v = &scrollargs[1]} },
+    { ClkClientWin,         MODKEY,              Button6,        resizemousescroll, {.v = &scrollargs[2]} },
+    { ClkClientWin,         MODKEY,              Button7,        resizemousescroll, {.v = &scrollargs[3]} },
 	{ ClkClientWin,         MODKEY|ShiftMask,    Button3,        dragcfact,      {0} },
 	{ ClkClientWin,         MODKEY|ShiftMask,    Button1,        dragmfact,      {0} },
 	{ ClkTagBar,            0,                   Button1,        view,           {0} },
